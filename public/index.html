@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>SPORTZ — Predict. Play. Win.</title>
+<style>
+:root{
+  --bg:#0b0f1a; --bg2:#111726; --card:#151d30; --card2:#1b2440;
+  --line:#232e4a; --txt:#eef2ff; --mut:#8a93ad; --mut2:#5c6583;
+  --acc:#22c55e; --acc2:#4ade80; --warn:#f59e0b; --danger:#ef4444; --info:#3b82f6;
+  --radius:16px; --sh:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--txt); min-height:100dvh; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;}
+.app{max-width:520px; margin:0 auto; min-height:100dvh; position:relative;
+  background:radial-gradient(1200px 500px at 50% -10%, #16203d 0%, var(--bg) 55%);}
+header{position:sticky; top:0; z-index:40; padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 12px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:linear-gradient(180deg, rgba(11,15,26,.94), rgba(11,15,26,.72));
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+.logo{display:flex; align-items:center; gap:9px; font-weight:800; font-size:20px; letter-spacing:.5px}
+.logo .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--acc),#0ea5e9);
+  display:grid;place-items:center;color:#04120a;font-size:14px;box-shadow:0 4px 12px rgba(34,197,94,.4)}
+.logo b{color:var(--acc2)}
+.hdr-right{display:flex; align-items:center; gap:10px}
+.coin-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:6px 12px;font-weight:700;font-size:13px;color:var(--acc2);cursor:pointer}
+.avatar-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--acc);cursor:pointer;
+  background:linear-gradient(135deg,#1e293b,#334155);color:var(--txt);font-weight:800;font-size:14px;display:grid;place-items:center}
+main{padding:0 16px calc(100px + env(safe-area-inset-bottom,0px))}
+.screen-title{font-size:22px;font-weight:800;margin:18px 0 2px}
+.screen-sub{color:var(--mut);font-size:13px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--sh); padding:16px; margin-bottom:14px; animation:pop .3s ease}
+@keyframes pop{0%{transform:scale(.97);opacity:0}100%{transform:scale(1);opacity:1}}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
+.section-title h3{margin:0;font-size:15px;font-weight:800;letter-spacing:.3px}
+.section-title a{color:var(--acc2);font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#16a34a,#0ea5e9);
+  border-radius:var(--radius);padding:22px;color:#fff;margin-bottom:16px;box-shadow:var(--sh)}
+.hero::before{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;
+  background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%)}
+.hero .lab{font-size:12px;opacity:.85;font-weight:600;letter-spacing:.5px}
+.hero .bal{font-size:34px;font-weight:900;margin:6px 0 14px;display:flex;align-items:center;gap:8px;position:relative;z-index:1}
+.hero .row{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:800;
+  font-size:13px;padding:11px 16px;border-radius:12px;border:none;cursor:pointer;
+  transition:transform .12s ease, filter .2s; text-decoration:none}
+.btn:active{transform:scale(.96)}
+.btn.glow{background:#fff;color:#0b7a33}
+.btn.ghost{background:rgba(255,255,255,.16);color:#fff}
+.game{display:flex;align-items:center;gap:12px}
+.game .vs{text-align:center;flex:1}
+.game .team{font-weight:800;font-size:15px;margin-bottom:2px}
+.game .t-score{font-size:20px;font-weight:900}
+.game .meta{font-size:12px;color:var(--mut);font-weight:600}
+.team-a,.team-b{flex:0 0 60px;text-align:center}
+.team-logo{width:38px;height:38px;border-radius:10px;margin:0 auto 4px;
+  display:grid;place-items:center;font-weight:900;font-size:12px;color:#fff}
+.team-label{font-size:11px;font-weight:700;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status-chip{font-size:11px;font-weight:800;padding:4px 9px;border-radius:20px;letter-spacing:.3px}
+.st-live{background:var(--danger);color:#fff;animation:pulse 1.4s infinite}
+.st-final{background:#2a3552;color:var(--mut)}
+.st-up{background:#23304f;color:var(--info)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.odds{display:flex;justify-content:space-between;gap:8px;margin-top:12px}
+.odd{flex:1;text-align:center;background:var(--bg2);border:1px solid var(--line);
+  border-radius:10px;padding:9px;cursor:pointer;transition:.15s}
+.odd b{display:block;font-size:15px;color:var(--acc2)}
+.odd span{font-size:11px;color:var(--mut)}
+.odd.selected{background:linear-gradient(135deg,#14532d,#0f3a5e);border-color:var(--acc);transform:scale(1.03)}
+.betbar{position:sticky;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:30;
+  background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:12px;
+  box-shadow:var(--sh); display:none; gap:10px; align-items:center; margin:8px 0 20px}
+.betbar.show{display:flex;animation:pop .25s ease}
+.betbar .stake{flex:1;display:flex;flex-direction:column;gap:6px}
+.betbar .stake input{background:var(--bg);border:1px solid var(--line);color:var(--txt);
+  border-radius:10px;padding:8px 10px;font-size:15px;font-weight:700;width:100%}
+.stepper{display:flex;gap:6px}
+.stepper button{background:var(--bg2);border:1px solid var(--line);color:var(--acc2);
+  width:44px;height:32px;border-radius:8px;font-weight:800;cursor:pointer}
+.chip{background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:20px;
+  padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer}
+.chip.active{background:var(--acc);color:#04120a;border-color:var(--acc)}
+.row{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.row .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:0 0 42px;
+  background:var(--bg2);font-size:19px}
+.row .mid{flex:1;min-width:0}
+.row .mid b{display:block;font-size:14px}
+.row .mid span{font-size:12px;color:var(--mut)}
+.badge{font-size:11px;font-weight:800;padding:3px 8px;border-radius:8px;white-space:nowrap}
+.b-win{background:#0e2b1a;color:var(--acc2)}
+.b-loss{background:#331217;color:var(--danger)}
+.b-pend{background:#1e1a0b;color:var(--warn)}
+.amt{font-weight:900;font-size:14px}
+.amt.up{color:var(--acc2)} .amt.down{color:var(--danger)}
+.lb-top{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:6px 0 20px}
+.lb-podium{display:flex;flex-direction:column;align-items:center;gap:6px;width:88px}
+.lb-podium .ring{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;color:#fff}
+.p1{width:74px;height:74px;font-size:24px;background:linear-gradient(135deg,#f59e0b,#fcd34d);box-shadow:0 6px 20px rgba(245,158,11,.4)}
+.p2{background:linear-gradient(135deg,#94a3b8,#cbd5e1)}
+.p3{background:linear-gradient(135deg,#b45309,#d97706)}
+.rank-lab{font-size:11px;color:var(--mut);font-weight:700}
+.rank-num{width:32px;flex:0 0 32px;text-align:center;font-weight:900;color:var(--mut2);font-size:15px}
+.chall{display:flex;align-items:center;gap:13px;padding:15px;margin-bottom:12px;animation:pop .3s ease}
+.chall .emoji{width:44px;height:44px;border-radius:12px;background:var(--bg2);display:grid;place-items:center;font-size:21px;flex:0 0 44px}
+.chall .mid{flex:1}
+.chall .mid b{font-size:14px;display:block}
+.chall .mid span{font-size:12px;color:var(--mut)}
+.chall .reward{font-size:12px;font-weight:800;color:var(--acc2)}
+.progress{height:8px;background:var(--bg2);border-radius:20px;overflow:hidden;margin-top:8px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),#0ea5e9);border-radius:20px;transition:width .6s ease}
+.done-badge{background:#0e2b1a;color:var(--acc2);font-size:11px;font-weight:800;padding:4px 9px;border-radius:10px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:50;max-width:100%;
+  background:rgba(13,18,30,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  padding:8px calc(env(safe-area-inset-bottom,0px)) 8px; display:grid;
+  grid-template-columns:repeat(5,1fr); margin:0 auto; width:100%}
+.nav-i{background:none;border:none;color:var(--mut2);display:flex;flex-direction:column;
+  align-items:center;gap:3px;font-size:10px;font-weight:700;cursor:pointer;padding:6px 0;position:relative}
+.nav-i svg{width:23px;height:23px;stroke-width:2}
+.nav-i.active{color:var(--acc2)}
+.nav-i.active::before{content:"";position:absolute;top:-8px;width:34px;height:3px;border-radius:3px;background:var(--acc)}
+.form{display:flex;flex-direction:column;gap:14px;margin-top:10px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bottom:6px}
+.field input{width:100%;background:var(--card);border:1px solid var(--line);color:var(--txt);
+  border-radius:12px;padding:13px 14px;font-size:15px;outline:none}
+.field input:focus{border-color:var(--acc)}
+.btn-primary{background:linear-gradient(135deg,var(--acc),#0ea5e9);color:#04120a;width:100%;
+  padding:14px;font-size:15px;border-radius:12px;border:none;font-weight:800;cursor:pointer}
+.btn-primary:active{transform:scale(.98)}
+.link{color:var(--acc2);font-weight:700;cursor:pointer}
+.center{text-align:center}
+.muted{color:var(--mut)} .small{font-size:12px}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);
+  background:var(--card2);border:1px solid var(--acc);color:var(--txt);padding:11px 18px;
+  border-radius:12px;font-weight:700;font-size:13px;z-index:100;opacity:0;pointer-events:none;
+  transition:.25s;box-shadow:var(--sh);white-space:nowrap;max-width:86vw}
+#toast.show{opacity:1;transform:translateX(-50%)}
+#toast.warn{border-color:var(--warn)}
+.brand-hero{text-align:center;padding:34px 0 6px}
+.brand-hero .logo{justify-content:center;font-size:30px}
+.brand-hero .tag{color:var(--mut);font-size:14px;margin-top:12px}
+.auth-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;margin-top:18px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--mut2);font-size:12px;margin:14px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+@media(min-width:720px){
+  .app{border-left:1px solid var(--line);border-right:1px solid var(--line);box-shadow:0 0 80px rgba(0,0,0,.5)}
+}
+
+.spinner{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--acc);border-radius:50%;margin:0 auto;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header id="topHeader" style="display:none">
+    <div class="logo"><span class="dot">⚡</span>SPORT<b>Z</b></div>
+    <div class="hdr-right">
+      <button class="coin-pill" onclick="go('profile')">🪙 <span id="pillCoins">0</span></button>
+      <button class="avatar-btn" id="avatarBtn" onclick="go('profile')"></button>
+    </div>
+  </header>
+  <main id="main"></main>
+  <nav id="bottomNav" style="display:none">
+    <button class="nav-i" data-view="home" onclick="go('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
+    <button class="nav-i" data-view="games" onclick="go('games')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>Games</button>
+    <button class="nav-i" data-view="picks" onclick="go('picks')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M3 12h18"/><path d="m6 6 3 3M18 6l-3 3"/></svg>Picks</button>
+    <button class="nav-i" data-view="rank" onclick="go('rank')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0Z"/><path d="M6 8H4a3 3 0 0 0 3 3M18 8h2a3 3 0 0 1-3 3"/></svg>Rank</button>
+    <button class="nav-i" data-view="profile" onclick="go('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>Profile</button>
+  </nav>
+  <div id="toast"></div>
+</div>
+
+<script>
+"use strict";
+/* ============ API CLIENT (server-backed, secure) ============ */
+const API = '/api';
+let token = localStorage.getItem('spz_token') || '';
+let me = null;
+const $ = s => document.querySelector(s);
+const fmt = n => Number(n).toLocaleString('en-US');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+const TEAM_STYLE = {
+  "Lakers":["#552583","LAL"],"Celtics":["#007A33","BOS"],"Warriors":["#1D428A","GSW"],
+  "Nuggets":["#0E2240","DEN"],"Bucks":["#00471B","MIL"],"Suns":["#1D1160","PHX"],
+  "Heat":["#98002E","MIA"],"76ers":["#006BB6","PHI"],"Mavericks":["#00538C","DAL"],
+  "Knicks":["#006BB6","NY"],"Thunder":["#007AC1","OKC"],"Grizzlies":["#5D76A9","MEM"],
+  "Chiefs":["#E31837","KC"],"Eagles":["#004C54","PHI"],"49ers":["#AA0000","SF"],
+  "Lions":["#0076B6","DET"],"Bills":["#00338D","BUF"],"Ravens":["#241773","BAL"],
+  "Cowboys":["#041E42","DAL"],"Packers":["#203731","GB"],
+  "Real Madrid":["#B3B7F4","RMA"],"Barcelona":["#004D98","BAR"],"Bayern":["#DC052D","BAY"],
+  "Man City":["#4B9CD3","MCI"],"Arsenal":["#EF0107","ARS"],"Liverpool":["#C8102E","LIV"],
+  "Inter":["#0068A8","INT"],"PSG":["#004170","PSG"],
+  "Yankees":["#003087","NYY"],"Dodgers":["#005A9C","LAD"],"Red Sox":["#BD3039","BOS"],
+  "Astros":["#EB6E1F","HOU"],"Mets":["#FF5910","NYM"],"Cubs":["#0E3386","CHC"],
+  "Padres":["#2F241D","SD"],"Braves":["#CE1141","ATL"],"Mariners":["#0C2C56","SEA"]
+};
+const SPORTS = {'NBA':'🏀','NFL':'🏈','MLB':'⚾','CL':'⚽'};
+function tinfo(n){ const t = TEAM_STYLE[n] || ["#1e3a8a", n.slice(0,3).toUpperCase()]; return {bg:t[0], short:t[1]}; }
+
+function setToken(t){ token = t || ''; token ? localStorage.setItem('spz_token', token) : localStorage.removeItem('spz_token'); }
+async function api(path, opt = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers.Authorization = 'Bearer ' + token;
+  const url = path.startsWith('/api') ? path : API + path;
+  const r = await fetch(url, { ...opt, headers });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(j.error || 'Request failed'); e.status = r.status; e.code = j.code; throw e; }
+  return j;
+}
+
+/* ============ UI primitives ============ */
+let toastTimer;
+function toast(msg, warn){ const t = $('#toast'); t.textContent = msg; t.classList.toggle('warn', !!warn); t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400); }
+function loading(msg){ return `<div class="center" style="padding:64px 0"><div class="spinner"></div><div class="muted" style="margin-top:14px">${esc(msg || 'Loading...')}</div></div>`; }
+function errorHTML(e){ return `<div class="center" style="padding:44px 0"><div style="font-size:32px">⚠️</div><div class="muted" style="margin-top:10px">${esc(e.message || 'Something went wrong')}</div><button class="btn-primary" style="margin-top:18px" onclick="render()">Retry</button></div>`; }
+
+/* ============ router / chrome ============ */
+const VIEWS = ['home','games','picks','rank','profile'];
+function go(v){ location.hash === '#/' + v ? render() : location.hash = '/' + v; }
+function currentView(){ const h = location.hash.replace(/^#\/?/, ''); return VIEWS.includes(h) ? h : 'home'; }
+function setChrome(logged){
+  $('#topHeader').style.display = logged ? 'flex' : 'none';
+  $('#bottomNav').style.display = logged ? 'grid' : 'none';
+  if (logged) $('#avatarBtn').textContent = me.username.charAt(0).toUpperCase();
+  document.querySelectorAll('.nav-i').forEach(b => b.classList.toggle('active', b.dataset.view === currentView()));
+}
+async function render(){
+  if (!me) { setChrome(false); $('#main').innerHTML = authHTML(); bindAuth(); return; }
+  setChrome(true);
+  const v = currentView();
+  $('#main').innerHTML = loading('Loading…');
+  try {
+    let html = '';
+    if (v === 'home') html = await viewHome();
+    else if (v === 'games') html = await viewGames();
+    else if (v === 'picks') html = await viewPicks();
+    else if (v === 'rank') html = await viewRank();
+    else if (v === 'profile') html = await viewProfile();
+    $('#main').innerHTML = html;
+    $('#pillCoins').textContent = fmt(me.coins);
+  } catch (e) { $('#main').innerHTML = errorHTML(e); }
+}
+
+/* ============ AUTH ============ */
+let authMode = 'signup';
+function authHTML(){ return `
+  <div class="brand-hero"><div class="logo"><span class="dot">⚡</span>SPORT<b>Z</b></div>
+    <div class="tag">Predict games. Earn coins. Climb the ranks.</div></div>
+  <div class="auth-card">
+    <div style="display:flex;gap:16px;font-weight:800;margin-bottom:4px">
+      <a class="link" id="tabSign" style="font-size:17px" onclick="setMode('signup')">Sign up</a>
+      <a class="muted" id="tabLog" style="font-size:17px;cursor:pointer" onclick="setMode('login')">Log in</a>
+    </div>
+    <form id="authForm" class="form" onsubmit="return false">
+      <div class="field" id="fName"><label>Name</label><input id="aName" placeholder="Your name" autocomplete="off"></div>
+      <div class="field"><label>Email</label><input id="aEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="field"><label>Password</label><input id="aPass" type="password" placeholder="At least 8 characters" autocomplete="current-password"></div>
+      <button class="btn-primary" type="submit" id="aSubmit">Create account</button>
+    </form>
+    <div class="divider">or</div>
+    <button class="btn-primary" style="background:var(--card2);color:var(--acc2)" onclick="demoLogin()">⚡ Try demo account</button>
+    <div class="center small muted" style="margin-top:14px">Free virtual coins on signup. Virtual only — no real money.</div>
+  </div>`; }
+function setMode(m){ authMode = m;
+  $('#fName').style.display = m === 'signup' ? 'block' : 'none';
+  $('#aSubmit').textContent = m === 'signup' ? 'Create account' : 'Log in';
+  $('#tabSign').style.color = m === 'signup' ? 'var(--acc2)' : 'var(--mut2)';
+  $('#tabLog').style.color = m === 'login' ? 'var(--acc2)' : 'var(--mut2)'; }
+function bindAuth(){
+  setMode(authMode);
+  $('#authForm').addEventListener('submit', onSubmitAuth);
+}
+async function onSubmitAuth(e){
+  e.preventDefault();
+  const btn = $('#aSubmit'); btn.disabled = true; btn.textContent = 'Please wait…';
+  try {
+    if (authMode === 'signup') {
+      const j = await api('/api/auth/signup', { method:'POST', body: JSON.stringify({ username:$('#aName').value, email:$('#aEmail').value, password:$('#aPass').value }) });
+      setToken(j.token); me = j.user; toast('Welcome, ' + j.user.username.split(' ')[0] + '! +' + fmt(j.user.coins) + ' 🪙');
+    } else {
+      const j = await api('/api/auth/login', { method:'POST', body: JSON.stringify({ email:$('#aEmail').value, password:$('#aPass').value }) });
+      setToken(j.token); me = j.user; toast('Welcome back, ' + j.user.username.split(' ')[0] + '!');
+    }
+    go('home');
+  } catch (e2) { toast(e2.message, true); btn.disabled = false; btn.textContent = authMode === 'signup' ? 'Create account' : 'Log in'; }
+}
+async function demoLogin(){
+  try {
+    const j = await api('/api/auth/login', { method:'POST', body: JSON.stringify({ email:'demo@sportz.app', password:'demo1234' }) });
+    setToken(j.token); me = j.user; toast('Signed in as Demo Player'); go('home');
+  } catch (e) { toast('Demo sign-in failed: ' + e.message, true); }
+}
+function logout(){ setToken(''); me = null; go('home'); }
+
+/* ============ DAILY ============ */
+async function claimDaily(){
+  try {
+    const r = await api('/api/daily/claim', { method:'POST' });
+    me.coins = r.coins; toast('🎁 +' + r.amount + ' coins! Day ' + r.streak); render();
+  } catch (e) { toast(e.message, true); render(); }
+}
+function dailyCard(ds){
+  const claimed = ds.claimed, streak = ds.streak, next = 50 + streak * 10;
+  return `<div class="card" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#1f3a5f,#0e2438)">
+    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--warn),#e07b00);display:grid;place-items:center;font-size:26px;flex:0 0 52px">🎁</div>
+    <div style="flex:1"><b>Daily Reward</b><div class="small muted">${claimed ? 'Come back tomorrow for your ' + next + ' 🪙 streak bonus' : 'Claim ' + next + ' coins • Day ' + (streak + 1)}</div></div>
+    ${claimed ? '<span class="done-badge">✔ Claimed</span>' : '<button class="btn glow" onclick="claimDaily()">Claim</button>'}
+  </div>`; }
+
+/* ============ GAMES ============ */
+/* ============ GAMES ============ */
+function compOf(g){ const c = (g.competition || '').trim(); return c ? c : g.sport; }
+// Actual scheduled kickoff date+time (never a relative "in 57m" label).
+function kickoff(ts){
+  const d = new Date(ts), now = new Date();
+  const t = d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  const tmr = new Date(now.getTime() + 86400000);
+  if (d.toDateString() === now.toDateString()) return 'Today · ' + t;
+  if (d.toDateString() === tmr.toDateString()) return 'Tomorrow · ' + t;
+  return d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' }) + ' · ' + t;
+}
+function gameCard(g){
+  const st = g.status;
+  const cls = st === 'final' ? 'st-final' : st === 'live' ? 'st-live' : 'st-up';
+  const label = st === 'final' ? 'FINAL' : st === 'live' ? 'LIVE' : 'UPCOMING';
+  const score = (g.score_away != null && g.score_home != null) ? `${g.score_away}–${g.score_home}` : 'VS';
+  const meta = st === 'final' ? 'Full time' : st === 'live' ? 'Live now' : 'Kickoff ' + kickoff(g.start_ts);
+  return `<div class="card" style="padding:15px;cursor:pointer" onclick="openGame('${esc(g.id)}')">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span class="muted" style="font-size:12px">${SPORTS[g.sport] || '🏆'} ${esc(compOf(g))}</span>
+      <span class="status-chip ${cls}">${label}</span></div>
+    <div class="game">
+      <div class="team-a"><div class="team-logo" style="background:${tinfo(g.away).bg}">${tinfo(g.away).short}</div><div class="team-label">${esc(g.away)}</div></div>
+      <div class="vs"><div class="t-score">${score}</div><div class="meta">${meta}</div></div>
+      <div class="team-b"><div class="team-logo" style="background:${tinfo(g.home).bg}">${tinfo(g.home).short}</div><div class="team-label">${esc(g.home)}</div></div>
+    </div></div>`; }
+
+async function viewGames(){
+  const games = await api('/api/games');
+  const live = games.filter(g => g.status === 'live');
+  const up = games.filter(g => g.status === 'upcoming');
+  const done = games.filter(g => g.status === 'final');
+  let h = '<div class="screen-title">Games</div><div class="screen-sub">Pick a winner. Win virtual coins.</div>';
+  if (live.length) h += '<div class="section-title"><h3>🔴 Live</h3></div>' + live.map(gameCard).join('');
+  h += '<div class="section-title"><h3>Upcoming</h3></div>' + (up.length ? up.map(gameCard).join('') : '<div class="card muted center" style="padding:18px">No upcoming games</div>');
+  h += '<div class="section-title"><h3>Finished</h3></div>' + done.map(gameCard).join('');
+  return h;
+}
+
+let currentBet = null;
+async function openGame(id){
+  $('#main').innerHTML = loading('Loading game…');
+  try {
+    const g = await api('/api/games/' + encodeURIComponent(id));
+    currentBet = null;
+    const score = (g.score_away != null && g.score_home != null) ? `${g.score_away}–${g.score_home}` : 'VS';
+    const cls = g.status === 'final' ? 'st-final' : g.status === 'live' ? 'st-live' : 'st-up';
+    const label = g.status === 'final' ? 'FINAL' : g.status === 'live' ? 'LIVE' : 'UPCOMING';
+    const metaLine = g.status === 'upcoming' ? 'Kickoff ' + kickoff(g.start_ts) : g.status === 'live' ? 'Live now' : 'Full time';
+    let h = `<div class="screen-title">${esc(g.away)} vs ${esc(g.home)}</div><div class="screen-sub">${SPORTS[g.sport] || ''} ${esc(compOf(g))} • ${metaLine}</div>
+      <div class="card">
+        <div class="game">
+          <div class="team-a"><div class="team-logo" style="width:46px;height:46px;background:${tinfo(g.away).bg}">${tinfo(g.away).short}</div><div class="team-label">${esc(g.away)}</div></div>
+          <div class="vs"><div class="t-score" style="font-size:26px">${score}</div>
+            <span class="status-chip ${cls}">${label}</span></div>
+          <div class="team-b"><div class="team-logo" style="width:46px;height:46px;background:${tinfo(g.home).bg}">${tinfo(g.home).short}</div><div class="team-label">${esc(g.home)}</div></div>
+        </div>
+        ${g.status === 'final'
+          ? `<div class="center muted" style="margin-top:14px">Final — ${g.score_away > g.score_home ? esc(g.away) : esc(g.home)} wins</div>`
+          : `<div class="odds">
+              <div class="odd" id="od_away" onclick="selectBet('${esc(g.id)}','away')"><b>1.90</b><span>${esc(g.away)}</span></div>
+              <div class="odd" id="od_home" onclick="selectBet('${esc(g.id)}','home')"><b>1.90</b><span>${esc(g.home)}</span></div>
+            </div>`}
+      </div>
+      <div class="betbar" id="betbar">
+        <div class="stake"><input id="stakeIn" type="number" min="5" max="${me.coins}" value="20">
+          <div class="stepper"><button onclick="stakeBy(-10)">−10</button><button onclick="stakeBy(10)">+10</button></div></div>
+        <button class="btn glow" id="lockBtn" onclick="confirmBet('${esc(g.id)}')">Lock In</button>
+      </div>
+      <button class="btn-primary" onclick="go('games')" style="margin-top:6px">← Back to games</button>`;
+    $('#main').innerHTML = h;
+  } catch (e) { $('#main').innerHTML = errorHTML(e); }
+}
+function selectBet(id, side){ currentBet = { gameId:id, side }; document.querySelectorAll('.odd').forEach(o => o.classList.remove('selected')); $('#od_' + side).classList.add('selected'); $('#betbar').classList.add('show'); }
+function stakeBy(d){ const el = $('#stakeIn'); if (el) el.value = Math.max(1, (+el.value || 0) + d); }
+async function confirmBet(id){
+  if (!currentBet || currentBet.gameId !== id) { toast('Pick a side first', true); return; }
+  const stake = Math.floor(+$('#stakeIn').value);
+  if (!stake || stake < 1) { toast('Enter a stake', true); return; }
+  const btn = $('#lockBtn'); if (btn) { btn.disabled = true; btn.textContent = 'Placing…'; }
+  try {
+    const j = await api('/api/predictions', { method:'POST', body: JSON.stringify({ gameId: id, side: currentBet.side, stake }) });
+    me.coins = j.coins; toast('✔ ' + (currentBet.side === 'away' ? 'Away' : 'Home') + ' locked for ' + fmt(stake) + ' 🪙'); render();
+  } catch (e) { if (btn) { btn.disabled = false; btn.textContent = 'Lock In'; } toast(e.message, true); }
+}
+
+/* ============ PICKS ============ */
+async function viewPicks(){
+  const j = await api('/api/predictions');
+  const preds = j.predictions;
+  if (!preds.length) return `<div class="screen-title">Picks</div><div class="screen-sub">Your prediction history</div>
+    <div class="card center" style="padding:26px"><div style="font-size:34px;margin-bottom:8px">🎫</div><div class="muted">No picks yet.</div>
+    <button class="btn-primary" onclick="go('games')" style="margin-top:16px">Make your first pick</button></div>`;
+  const pending = preds.filter(p => p.status === 'pending').length;
+  const won = preds.filter(p => p.status === 'won').length;
+  const lost = preds.filter(p => p.status === 'lost').length;
+  let h = `<div class="screen-title">Picks</div><div class="screen-sub">${pending} pending • ${won} won • ${lost} lost</div>`;
+  for (const p of preds) {
+    const win = p.status === 'won';
+    const amt = win ? '+' + fmt(Math.round(p.stake * p.odds)) : p.status === 'lost' ? '−' + fmt(p.stake) : fmt(p.stake);
+    h += `<div class="row"><div class="ic">${SPORTS[p.sport] || '🏆'}</div>
+      <div class="mid"><b>${esc(p.pick)}</b><span>${p.sport} pick${p.final ? ' • ' + p.final : ''}</span></div>
+      <span class="badge ${p.status === 'won' ? 'b-win' : p.status === 'lost' ? 'b-loss' : 'b-pend'}">${p.status.toUpperCase()}</span>
+      <span class="amt ${win ? 'up' : p.status === 'lost' ? 'down' : 'muted'}">${amt}</span></div>`;
+  }
+  return h;
+}
+
+/* ============ LEADERBOARD ============ */
+async function viewRank(){
+  const j = await api('/api/leaderboard');
+  const rows = j.leaderboard;
+  const top = rows.slice(0, 3);
+  const order = [top[1], top[0], top[2]];
+  let h = '<div class="screen-title">Leaderboard</div><div class="screen-sub">Top predictors</div>';
+  h += `<div class="lb-top">${order.map((r, i) => { const place = i === 1 ? 1 : i === 0 ? 2 : 3;
+    return `<div class="lb-podium"><div class="ring ${place === 1 ? 'p1' : place === 2 ? 'p2' : 'p3'}">${r ? esc(r.name.charAt(0)) : '?'}</div>
+      <div class="rank-lab">#${place}</div><div style="font-size:12px;font-weight:700">${r ? esc(r.name) : '—'}</div>
+      <div style="font-size:11px;color:var(--acc2);font-weight:800">${r ? fmt(r.coins) : ''} 🪙</div></div>`; }).join('')}</div>`;
+  rows.forEach((r, i) => {
+    h += `<div class="row ${r.me ? 'card flat' : ''}" ${r.me ? 'style="background:var(--card2);border:1px solid var(--acc);border-radius:12px"' : ''}>
+      <div class="rank-num">${i + 1}</div><div class="ic" style="${r.me ? 'background:linear-gradient(135deg,var(--acc),#0ea5e9)' : ''}">${esc(r.name.charAt(0))}</div>
+      <div class="mid"><b>${esc(r.name)}${r.me ? ' <span style="color:var(--acc2)">(You)</span>' : ''}</b><span>${r.wp}% win rate</span></div>
+      <span style="font-weight:800;color:var(--acc2)">${fmt(r.coins)} 🪙</span></div>`;
+  });
+  return h;
+}
+
+/* ============ CHALLENGES ============ */
+function challengeCard(c){
+  const done = c.prog >= c.target; const pct = Math.min(100, Math.round(c.prog / c.target * 100));
+  return `<div class="chall"><div class="emoji">${c.emoji}</div><div class="mid"><b>${esc(c.name)}</b>
+    <span>${esc(c.desc)} (${fmt(c.prog)}/${fmt(c.target)})</span><div class="progress"><i style="width:${pct}%"></i></div></div>
+    ${done ? '<span class="done-badge">✔ Done</span>' : '<span class="reward">+' + c.reward + ' 🪙</span>'}</div>`; }
+
+/* ============ PROFILE ============ */
+async function viewProfile(){
+  const [ch, tx] = await Promise.all([ api('/api/challenges'), api('/api/transactions') ]);
+  let h = `<div class="screen-title">Profile</div><div class="screen-sub">Your stats and wallet</div>
+    <div class="card" style="display:flex;align-items:center;gap:14px">
+      <div class="avatar-btn" style="width:56px;height:56px;font-size:22px;border-width:3px">${esc(me.username.charAt(0))}</div>
+      <div style="flex:1"><b style="font-size:17px">${esc(me.username)}</b><div class="small muted">${esc(me.email)}</div>
+        <div class="small muted">Joined ${new Date(me.joined).toLocaleDateString()}</div></div>
+    </div>
+    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b>Wallet</b>
+      <span style="font-weight:900;color:var(--acc2);font-size:18px">🪙 ${fmt(me.coins)}</span></div>
+      <div class="small muted" style="margin-top:6px">Virtual coins only — no real-money value.</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="chip" style="color:var(--danger)" onclick="logout()">Log out</button></div></div>
+    <div class="card"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:var(--acc2)">${me.wins}</div><div class="small muted">Wins</div></div>
+      <div style="text-align:center"><div style="font-size:22px;font-weight:900">${me.losses}</div><div class="small muted">Losses</div></div>
+      <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:var(--acc2)">${me.wp}%</div><div class="small muted">Win rate</div></div>
+    </div></div>
+    <div class="section-title"><h3>🏆 Challenges</h3></div>${ch.challenges.map(challengeCard).join('')}
+    <div class="section-title"><h3>💳 Wallet activity</h3></div>`;
+  const txns = tx.transactions;
+  h += txns.length ? `<div class="card">${txns.slice(0, 12).map(t => `<div class="row">
+      <div class="ic">${t.kind === 'win' ? '🏆' : t.kind === 'bet' ? '🎫' : '🎁'}</div>
+      <div class="mid"><b>${esc(t.label)}</b><span>${new Date(t.t).toLocaleString()}</span></div>
+      <span class="amt ${t.amount > 0 ? 'up' : 'down'}">${t.amount > 0 ? '+' : ''}${fmt(t.amount)}</span></div>`).join('')}</div>`
+    : '<div class="card muted center" style="padding:18px">No activity yet</div>';
+  return h;
+}
+
+/* ============ HOME ============ */
+async function viewHome(){
+  const [games, ds, ch, preds] = await Promise.all([
+    api('/api/games'), api('/api/daily/state'), api('/api/challenges'),
+    api('/api/predictions').then(j => j.predictions).catch(() => [])
+  ]);
+  const live = games.filter(g => g.status === 'live');
+  const up = games.filter(g => g.status === 'upcoming').slice(0, 2);
+  const pending = preds.filter(p => p.status === 'pending').length;
+  return `
+    <div class="hero"><div class="lab">AVAILABLE BALANCE</div><div class="bal">🪙 ${fmt(me.coins)}</div>
+      <div class="row"><button class="btn glow" onclick="go('games')">Make a Pick</button><button class="btn ghost" onclick="go('rank')">Leaderboard</button></div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+      <div class="card flat" style="margin:0;padding:14px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--acc2)">${me.wins}</div><div class="small muted">Wins</div></div>
+      <div class="card flat" style="margin:0;padding:14px;text-align:center"><div style="font-size:22px;font-weight:900">${pending}</div><div class="small muted">Pending</div></div>
+      <div class="card flat" style="margin:0;padding:14px;text-align:center"><div style="font-size:22px;font-weight:900;color:var(--acc2)">${me.wp}%</div><div class="small muted">Win rate</div></div>
+    </div>
+    ${dailyCard(ds)}
+    <div class="section-title"><h3>🔴 Live Now</h3><a onclick="go('games')">See all</a></div>
+    ${live.length ? live.map(gameCard).join('') : '<div class="card muted center" style="padding:20px">No live games right now</div>'}
+    <div class="section-title"><h3>Upcoming</h3><a onclick="go('games')">See all</a></div>
+    ${up.map(gameCard).join('')}
+    <div class="section-title"><h3>🎯 Challenge</h3><a onclick="go('profile')">More</a></div>
+    ${challengeCard(ch.challenges[0])}`;
+}
+
+/* ============ BOOT ============ */
+window.addEventListener('hashchange', () => render());
+(async function boot(){
+  if (token) {
+    try { const j = await api('/api/auth/me'); me = j.user; }
+    catch (e) { setToken(''); me = null; }
+  }
+  render();
+})();
+</script>
+</body>
+</html>

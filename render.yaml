@@ -1,0 +1,20 @@
+# Render blueprint — deploys SPORTZ to a public URL automatically.
+services:
+  - type: web
+    name: sportz
+    runtime: node
+    buildCommand: true
+    startCommand: node server/index.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      # Sports data provider: espn (real API + demo fallback) or demo
+      - key: SPORTS_PROVIDER
+        value: espn
+      # Optional overrides:
+      # - key: STARTING_BALANCE
+      #   value: 10000
+      # - key: SPORTS_API_URL
+      #   value: https://site.api.espn.com/apis/site/v2

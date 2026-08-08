@@ -1,0 +1,16 @@
+{
+  "name": "sportz",
+  "version": "1.0.0",
+  "description": "SPORTZ — secure multi-user, mobile-first sports prediction web app (virtual coins only, no real money)",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "reset": "node server/reset.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {}
+}
